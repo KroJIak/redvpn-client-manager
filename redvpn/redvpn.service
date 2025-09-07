@@ -1,0 +1,17 @@
+[Unit]
+Description=RedVPN (sing-box via ssconf)
+After=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+Group=__GROUP__
+ExecStartPre=/usr/local/bin/redvpn-update
+ExecStart=/usr/bin/sing-box run -c __HOME__/.config/sing-box/redvpn.json
+Restart=on-failure
+# Даем права на создание сетевых интерфейсов
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
+
+[Install]
+WantedBy=multi-user.target

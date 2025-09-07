@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Определяем домашнюю директорию пользователя
+if [ -z "${HOME:-}" ]; then
+    HOME="/home/$(logname 2>/dev/null || echo "$SUDO_USER" 2>/dev/null || echo "root")"
+fi
+
+# Загружаем конфигурацию
+CONFIG_FILE="$HOME/.config/redvpn/redvpn.conf"
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Ошибка: Файл конфигурации не найден: $CONFIG_FILE"
+    exit 1
+fi
+
+# Источник конфигурации
+source "$CONFIG_FILE"
+
+# Проверяем наличие SSCONF
+if [ -z "${SSCONF:-}" ]; then
+    echo "Ошибка: SSCONF не определен в конфигурации"
+    exit 1
+fi
+
+# извлекаем host и token
+u="${SSCONF#ssconf://}"                         # red.alfanw.net/...
+host="${u%%/*}"                                 # red.alfanw.net
+token="${u#*/key/}"; token="${token%%#*}"      # NjU5...==
+
+# получаем параметры сервера от API
+echo "Запрос к API сервера: https://${host}/key/${token}"
+api_response="$(curl -fsSL "https://${host}/key/${token}" 2>/dev/null)"
+
+if [ -z "$api_response" ]; then
+    echo "Ошибка: Не удалось получить ответ от сервера"
+    echo "Возможные причины:"
+    echo "  1. Сервер недоступен: https://${host}"
+    echo "  2. Неверный ключ: ${token:0:20}..."
+    echo "  3. Блокировка домена провайдером"
+    exit 1
+fi
+
+echo "Получен ответ от API: ${api_response:0:100}..."
+
+# Парсим JSON ответ
+server="$(echo "$api_response" | jq -r '.server' 2>/dev/null)"
+server_port="$(echo "$api_response" | jq -r '.server_port' 2>/dev/null)"
+password="$(echo "$api_response" | jq -r '.password' 2>/dev/null)"
+method="$(echo "$api_response" | jq -r '.method' 2>/dev/null)"
+
+# Проверяем, что все параметры получены
+if [ -z "$server" ] || [ -z "$server_port" ] || [ -z "$password" ] || [ -z "$method" ] || [ "$server" = "null" ]; then
+    echo "Ошибка: Неполный ответ от API сервера"
+    echo "Полученный ответ: $api_response"
+    exit 1
+fi
+
+echo "Параметры сервера:"
+echo "  Сервер: $server"
+echo "  Порт: $server_port"
+echo "  Метод: $method"
+echo "  Пароль: ${password:0:10}..."
+
+mkdir -p "$HOME/.config/sing-box"
+cat >"$HOME/.config/sing-box/redvpn.json" <<JSON
+{
+  "log": { "level": "info" },
+  "inbounds": [
+    { "type": "tun", 
+      "interface_name": "redvpn-tun0",
+      "address": ["172.19.0.1/30"],
+      "auto_route": true, 
+      "strict_route": false,
+      "sniff": true,
+      "stack": "system" }
+  ],
+  "outbounds": [
+    { "type": "shadowsocks",
+      "tag": "proxy",
+      "method": "${method}",
+      "password": "${password}",
+      "server": "${server}",
+      "server_port": ${server_port}
+    },
+    { "type": "direct",
+      "tag": "direct"
+    }
+  ],
+  "route": {
+    "auto_detect_interface": true,
+    "final": "proxy",
+    "rules": [
+      { "protocol": "dns", "outbound": "direct" },
+      { "ip_cidr": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8"], "outbound": "direct" }
+    ]
+  }
+}
+JSON
+
+echo "Конфигурация sing-box создана: $HOME/.config/sing-box/redvpn.json"

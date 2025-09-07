@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# RedVPN CLI - управление VPN сервисом
+# Использование: redvpn [start|stop|status|restart]
+
+SERVICE_NAME="redvpn.service"
+
+show_usage() {
+    echo "RedVPN CLI - управление VPN сервисом"
+    echo ""
+    echo "Использование:"
+    echo "  redvpn start   - Включить VPN"
+    echo "  redvpn stop    - Выключить VPN"
+    echo "  redvpn status  - Показать статус VPN"
+    echo "  redvpn restart - Перезапустить VPN"
+    echo ""
+    echo "Примеры:"
+    echo "  redvpn start"
+    echo "  redvpn stop"
+    echo "  redvpn status"
+}
+
+case "${1:-}" in
+    start)
+        echo "Включение RedVPN..."
+        systemctl start "$SERVICE_NAME"
+        sleep 2
+        if systemctl is-active --quiet "$SERVICE_NAME"; then
+            echo "✅ RedVPN включен"
+            echo "IP через VPN: $(curl -s ifconfig.me 2>/dev/null || echo 'недоступен')"
+        else
+            echo "❌ Ошибка включения RedVPN"
+            exit 1
+        fi
+        ;;
+    stop)
+        echo "Выключение RedVPN..."
+        systemctl stop "$SERVICE_NAME"
+        sleep 1
+        if ! systemctl is-active --quiet "$SERVICE_NAME"; then
+            echo "✅ RedVPN выключен"
+            echo "IP без VPN: $(curl -s ifconfig.me 2>/dev/null || echo 'недоступен')"
+        else
+            echo "❌ Ошибка выключения RedVPN"
+            exit 1
+        fi
+        ;;
+    status)
+        if systemctl is-active --quiet "$SERVICE_NAME"; then
+            echo "🟢 RedVPN активен"
+            echo "IP: $(curl -s ifconfig.me 2>/dev/null || echo 'недоступен')"
+        else
+            echo "🔴 RedVPN неактивен"
+        fi
+        ;;
+    restart)
+        echo "Перезапуск RedVPN..."
+        systemctl restart "$SERVICE_NAME"
+        sleep 3
+        if systemctl is-active --quiet "$SERVICE_NAME"; then
+            echo "✅ RedVPN перезапущен"
+            echo "IP: $(curl -s ifconfig.me 2>/dev/null || echo 'недоступен')"
+        else
+            echo "❌ Ошибка перезапуска RedVPN"
+            exit 1
+        fi
+        ;;
+    help|--help|-h)
+        show_usage
+        ;;
+    "")
+        echo "Ошибка: Не указана команда"
+        echo ""
+        show_usage
+        exit 1
+        ;;
+    *)
+        echo "Ошибка: Неизвестная команда '$1'"
+        echo ""
+        show_usage
+        exit 1
+        ;;
+esac
