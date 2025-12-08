@@ -1,11 +1,10 @@
-
 #!/usr/bin/env bash
 set -euo pipefail
 
 echo "RedVPN Quick Start Button Installer"
 echo "===================================="
 
-# Проверяем и устанавливаем необходимые зависимости
+# Check and install required dependencies
 check_dependencies() {
     local missing_deps=()
     
@@ -22,99 +21,99 @@ check_dependencies() {
     fi
     
     if [ ${#missing_deps[@]} -ne 0 ]; then
-        echo "Обнаружены отсутствующие зависимости:"
+        echo "Missing dependencies detected:"
         for dep in "${missing_deps[@]}"; do
             echo "  - $dep"
         done
         echo ""
-        echo "Начинаю установку..."
+        echo "Starting installation..."
         
-        # Обновляем пакеты
-        echo "Обновление списка пакетов..."
+        # Update packages
+        echo "Updating package list..."
         sudo apt update
         
-        # Устанавливаем curl и jq через apt
+        # Install curl and jq via apt
         if [[ " ${missing_deps[@]} " =~ " curl " ]]; then
-            echo "Установка curl..."
+            echo "Installing curl..."
             sudo apt install -y curl
         fi
         
         if [[ " ${missing_deps[@]} " =~ " jq " ]]; then
-            echo "Установка jq..."
+            echo "Installing jq..."
             sudo apt install -y jq
         fi
         
-        # Устанавливаем sing-box через официальный скрипт
+        # Install sing-box via official script
         if [[ " ${missing_deps[@]} " =~ " sing-box " ]]; then
-            echo "Установка sing-box..."
+            echo "Installing sing-box..."
             curl -fsSL https://sing-box.app/install.sh | sh
         fi
         
         echo ""
-        echo "Установка зависимостей завершена!"
+        echo "Dependencies installation completed!"
         echo ""
     fi
 }
 
-# Проверяем формат ssconf ключа
+# Validate ssconf key format
 validate_ssconf_key() {
     local key="$1"
     
     if [ -z "$key" ]; then
-        echo "Ошибка: Ключ не может быть пустым!"
+        echo "Error: Key cannot be empty!"
         return 1
     fi
     
     if [[ ! "$key" =~ ^ssconf:// ]]; then
-        echo "Ошибка: Неверный формат ssconf ключа!"
-        echo "Получен ключ: '$key'"
+        echo "Error: Invalid ssconf key format!"
+        echo "Received key: '$key'"
         return 1
     fi
     
     return 0
 }
 
-# Основная функция
+# Main function
 main() {
-    echo "Проверка и установка зависимостей..."
+    echo "Checking and installing dependencies..."
     check_dependencies
-    echo "✓ Зависимости проверены"
+    echo "✓ Dependencies checked"
     
     echo ""
-    echo "Введите ваш ssconf ключ RedVPN:"
-    echo "Формат: ssconf://red.alfanw.net/key/ВАШ_КЛЮЧ#RedVPN"
+    echo "Enter your RedVPN ssconf key:"
+    echo "Format: ssconf://red.alfanw.net/key/YOUR_KEY#RedVPN"
     echo ""
     
-    # Проверяем, что stdin доступен для чтения
+    # Check if stdin is available for reading
     if [ ! -t 0 ]; then
-        echo "Ошибка: Нет доступа к stdin для ввода ключа"
-        echo "Запустите скрипт интерактивно: bash install.sh"
+        echo "Error: No access to stdin for key input"
+        echo "Run the script interactively: bash install.sh"
         exit 1
     fi
     
-    echo -n "ssconf ключ: "
+    echo -n "ssconf key: "
     read -r ssconf_key
     
-    # Проверяем ключ
+    # Validate key
     if ! validate_ssconf_key "$ssconf_key"; then
         exit 1
     fi
     
-    echo "✓ Ключ принят: ${ssconf_key:0:20}..."
+    echo "✓ Key accepted: ${ssconf_key:0:20}..."
     
     echo ""
-    echo "Запуск настройки RedVPN..."
+    echo "Starting RedVPN setup..."
     echo "=========================="
     
-    # Запускаем setup.sh с передачей ключа
+    # Run setup.sh with key passed
     bash "$(dirname "$0")/redvpn/setup.sh" "$ssconf_key"
     
     echo ""
-    echo "Установка завершена!"
-    echo "Теперь вы можете добавить команду в Custom Command Toggle:"
-    echo "  Включить VPN: systemctl --user start redvpn.service"
-    echo "  Выключить VPN: systemctl --user stop redvpn.service"
-    echo "  Статус VPN: systemctl --user is-active redvpn.service"
+    echo "Installation completed!"
+    echo "You can now add command to Custom Command Toggle:"
+    echo "  Start VPN: systemctl --user start redvpn.service"
+    echo "  Stop VPN: systemctl --user stop redvpn.service"
+    echo "  VPN Status: systemctl --user is-active redvpn.service"
 }
 
 main "$@"

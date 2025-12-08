@@ -1,99 +1,99 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Проверяем формат ssconf ключа
+# Validate ssconf key format
 validate_ssconf_key() {
     local key="$1"
     
     if [ -z "$key" ]; then
-        echo "Ошибка: Ключ не может быть пустым!"
+        echo "Error: Key cannot be empty!"
         return 1
     fi
     
     if [[ ! "$key" =~ ^ssconf:// ]]; then
-        echo "Ошибка: Неверный формат ssconf ключа!"
-        echo "Получен ключ: '$key'"
-        echo "Ожидаемый формат: ssconf://red.alfanw.net/key/ВАШ_КЛЮЧ#RedVPN"
+        echo "Error: Invalid ssconf key format!"
+        echo "Received key: '$key'"
+        echo "Expected format: ssconf://red.alfanw.net/key/YOUR_KEY#RedVPN"
         return 1
     fi
     
     return 0
 }
 
-# Проверяем, что передан ssconf ключ
+# Check if ssconf key is provided
 if [ $# -ne 1 ]; then
-    echo "Ошибка: Необходимо передать ssconf ключ в качестве аргумента"
-    echo "Использование: $0 <ssconf_key>"
+    echo "Error: ssconf key must be provided as argument"
+    echo "Usage: $0 <ssconf_key>"
     exit 1
 fi
 
 SSCONF_KEY="$1"
 
-# Проверяем формат ключа
+# Validate key format
 if ! validate_ssconf_key "$SSCONF_KEY"; then
     exit 1
 fi
 
-echo "Настройка RedVPN..."
+echo "Setting up RedVPN..."
 echo "==================="
 
-# Создаем необходимые директории
-echo "Создание директорий..."
+# Create necessary directories
+echo "Creating directories..."
 mkdir -p "$HOME/.config/redvpn"
 mkdir -p "$HOME/.config/sing-box"
 
-# Записываем ключ в redvpn.conf
-echo "Сохранение ssconf ключа..."
+# Save key to redvpn.conf
+echo "Saving ssconf key..."
 cat > "$HOME/.config/redvpn/redvpn.conf" << EOF
 # RedVPN Configuration
 SSCONF='$SSCONF_KEY'
 EOF
 
-echo "Ключ сохранен в $HOME/.config/redvpn/redvpn.conf"
+echo "Key saved to $HOME/.config/redvpn/redvpn.conf"
 
-# Копируем готовый redvpn-update
-echo "Копирование redvpn-update..."
+# Copy redvpn-update
+echo "Copying redvpn-update..."
 SCRIPT_DIR="$(dirname "$0")"
 
-# Копируем redvpn-update в /usr/local/bin/
-echo "Копирование redvpn-update в /usr/local/bin/..."
+# Copy redvpn-update to /usr/local/bin/
+echo "Copying redvpn-update to /usr/local/bin/..."
 sudo cp "$SCRIPT_DIR/redvpn-update" "/usr/local/bin/redvpn-update"
 sudo chmod +x "/usr/local/bin/redvpn-update"
 
-# Копируем redvpn CLI в /usr/local/bin/
-echo "Копирование redvpn CLI в /usr/local/bin/..."
+# Copy redvpn CLI to /usr/local/bin/
+echo "Copying redvpn CLI to /usr/local/bin/..."
 sudo cp "$SCRIPT_DIR/redvpn" "/usr/local/bin/redvpn"
 sudo chmod +x "/usr/local/bin/redvpn"
 
-# Копируем redvpn.service в /etc/systemd/system/ с заменой плейсхолдеров
-echo "Копирование systemd сервиса..."
+# Copy redvpn.service to /etc/systemd/system/ with placeholder replacement
+echo "Copying systemd service..."
 CURRENT_USER="$(whoami)"
 CURRENT_GROUP="$(id -gn)"
 sed "s/__USER__/$CURRENT_USER/g; s/__GROUP__/$CURRENT_GROUP/g; s|__HOME__|$HOME|g" "$SCRIPT_DIR/redvpn.service" | sudo tee "/etc/systemd/system/redvpn.service" > /dev/null
 
-# Перезагружаем systemd (НЕ включаем автозапуск)
-echo "Настройка systemd сервиса..."
+# Reload systemd (do NOT enable autostart)
+echo "Configuring systemd service..."
 sudo systemctl daemon-reload
-# Сервис НЕ включается для автозапуска - только по требованию пользователя
+# Service is NOT enabled for autostart - only on user request
 
-# Настраиваем sudo без пароля для команд systemctl redvpn
-echo "Настройка sudo без пароля для redvpn команд..."
+# Configure sudo without password for redvpn systemctl commands
+echo "Configuring sudo without password for redvpn commands..."
 SUDOERS_RULE="$CURRENT_USER ALL=(ALL) NOPASSWD: /usr/local/bin/redvpn"
 echo "$SUDOERS_RULE" | sudo tee "/etc/sudoers.d/redvpn-$CURRENT_USER" > /dev/null
 sudo chmod 440 "/etc/sudoers.d/redvpn-$CURRENT_USER"
 
-# Добавляем пользователя в группу systemd-journal для управления сервисами
-echo "Добавление пользователя в группу systemd-journal..."
+# Add user to systemd-journal group for service management
+echo "Adding user to systemd-journal group..."
 sudo usermod -a -G systemd-journal "$CURRENT_USER"
 
-# Удаляем старые polkit правила
-echo "Очистка старых polkit правил..."
+# Remove old polkit rules
+echo "Cleaning up old polkit rules..."
 sudo rm -f "/etc/polkit-1/localauthority/50-local.d/50-redvpn.pkla"
 sudo rm -f "/etc/polkit-1/localauthority/50-local.d/51-redvpn-service.pkla"
 sudo rm -f "/etc/polkit-1/rules.d/50-redvpn.rules"
 
-# Создаем простое и эффективное polkit правило
-echo "Создание polkit правила для redvpn..."
+# Create simple and effective polkit rule
+echo "Creating polkit rule for redvpn..."
 sudo mkdir -p "/etc/polkit-1/rules.d"
 sudo tee "/etc/polkit-1/rules.d/50-redvpn.rules" > /dev/null << EOF
 polkit.addRule(function(action, subject) {
@@ -107,22 +107,22 @@ polkit.addRule(function(action, subject) {
 EOF
 
 echo ""
-echo "Настройка завершена!"
+echo "Setup completed!"
 echo "===================="
-echo "RedVPN сервис настроен."
+echo "RedVPN service configured."
 echo ""
-echo "⚠️  ВАЖНО: Для применения изменений в группах и polkit:"
-echo "   1. Перезагрузите систему ИЛИ"
-echo "   2. Выполните: newgrp systemd-journal"
-echo "   3. Перезапустите сессию (logout/login)"
+echo "⚠️  IMPORTANT: To apply changes in groups and polkit:"
+echo "   1. Reboot the system OR"
+echo "   2. Run: newgrp systemd-journal"
+echo "   3. Restart session (logout/login)"
 echo ""
-echo "Доступные команды:"
-echo "  redvpn start   - Включить VPN"
-echo "  redvpn stop    - Выключить VPN"
-echo "  redvpn status  - Показать статус VPN"
-echo "  redvpn restart - Перезапустить VPN"
+echo "Available commands:"
+echo "  redvpn start   - Start VPN"
+echo "  redvpn stop    - Stop VPN"
+echo "  redvpn status  - Show VPN status"
+echo "  redvpn restart - Restart VPN"
 echo ""
-echo "Для Custom Command Toggle используйте:"
+echo "For Custom Command Toggle use:"
 echo "  Toggle Command:   redvpn start"
 echo "  Untoggle Command: redvpn stop"
 echo "  Status Command:   redvpn status"

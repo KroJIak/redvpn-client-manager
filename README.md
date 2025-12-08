@@ -1,147 +1,157 @@
-# 🔴 RedVPN Client Manager
+# RedVPN Client Manager
 
 <div align="center">
 
-![RedVPN Logo](https://img.shields.io/badge/RedVPN-Client%20Manager-red?style=for-the-badge&logo=shield&logoColor=white)
+![RedVPN](https://img.shields.io/badge/RedVPN-Client%20Manager-red?style=for-the-badge&logo=shield&logoColor=white)
 
-**Клиентский менеджер для VPN-провайдера RedVPN с поддержкой ssconf протокола**
+![Bash](https://img.shields.io/badge/Bash-5.0+-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
+
+![sing-box](https://img.shields.io/badge/sing--box-VPN-00B8D4?style=for-the-badge&logo=shield&logoColor=white)
+
+![systemd](https://img.shields.io/badge/systemd-service-DA2525?style=for-the-badge&logo=linux&logoColor=white)
+
+![Debian](https://img.shields.io/badge/Debian%20%7C%20Ubuntu-ready-A81D33?style=for-the-badge&logo=debian&logoColor=white)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Debian%20%7C%20Ubuntu-orange.svg?style=flat-square)](https://www.debian.org/)
-[![Shell](https://img.shields.io/badge/shell-Bash-green.svg?style=flat-square)](https://www.gnu.org/software/bash/)
+
+[English](README.md) | [Русский](docs/README-RU.md)
 
 </div>
 
----
-
-## 📋 Содержание
-
-- [🎯 Описание](#-описание)
-- [✨ Особенности](#-особенности)
-- [🔧 Требования](#-требования)
-- [🚀 Быстрая установка](#-быстрая-установка)
-- [🎮 Использование](#-использование)
-- [⚙️ Конфигурация](#️-конфигурация)
-- [❓ Часто задаваемые вопросы](#-часто-задаваемые-вопросы)
-- [🐛 Устранение неполадок](#-устранение-неполадок)
-- [📄 Лицензия](#-лицензия)
+> Client manager for RedVPN provider with ssconf protocol support. Provides easy VPN connection and management through sing-box on Debian/Ubuntu systems.
 
 ---
 
-## 🎯 Описание
+## Table of Contents
 
-**RedVPN Client Manager** — это клиентский менеджер для VPN-провайдера **RedVPN**. Проект предоставляет удобный способ подключения и управления VPN-соединением через протокол **ssconf** с использованием **sing-box** на системах Debian/Ubuntu.
-
-### 🎨 Ключевые преимущества:
-
-- 🔐 **Безопасность**: Использует проверенный sing-box для туннелирования
-- 🚀 **Простота**: Один скрипт для полной настройки RedVPN
-- ⚡ **Скорость**: Автоматическое получение конфигурации от сервера RedVPN
-- 🎛️ **Удобство**: CLI-интерфейс для управления VPN
-- 🔄 **Автоматизация**: Интеграция с systemd для автозапуска
-- 🛡️ **Надежность**: Проверка зависимостей и валидация ssconf ключей
-
----
-
-## ✨ Особенности
-
-### 🔧 Автоматическая установка
-- Проверка и установка всех необходимых зависимостей для Debian/Ubuntu
-- Автоматическая настройка systemd сервиса для RedVPN
-- Конфигурация polkit для управления без sudo
-
-### 🎮 Удобное управление
-- Простые CLI команды (`redvpn start/stop/status`)
-- Интеграция с Custom Command Toggle
-- Отображение текущего IP-адреса через RedVPN
-
-### 🔄 Динамическая конфигурация
-- Автоматическое получение параметров сервера RedVPN через API
-- Обновление конфигурации sing-box при каждом запуске
-- Поддержка ssconf протокола RedVPN
----
-
-## 🔧 Требования
-
-### Системные требования
-- **ОС**: Debian 10+ или Ubuntu 18.04+
-- **Архитектура**: x86_64, ARM64
-- **Права**: sudo доступ для установки
-- **VPN**: Активная подписка на RedVPN с ssconf ключом
-
-### Зависимости
-- `curl` - для загрузки и API запросов
-- `jq` - для парсинга JSON ответов
-- `sing-box` - VPN клиент (устанавливается автоматически)
+- [Description](#description)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Quick Installation](#quick-installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Frequently Asked Questions](#frequently-asked-questions)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
 ---
 
-## 🚀 Быстрая установка
+## Description
 
-### 1️⃣ Клонирование репозитория
+**RedVPN Client Manager** is a client manager for the **RedVPN** VPN provider. The project provides a convenient way to connect and manage VPN connections through the **ssconf** protocol using **sing-box** on Debian/Ubuntu systems.
+
+### Key Advantages:
+
+- **Security**: Uses proven sing-box for tunneling
+- **Simplicity**: One script for complete RedVPN setup
+- **Speed**: Automatic configuration retrieval from RedVPN server
+- **Convenience**: CLI interface for VPN management
+- **Automation**: Integration with systemd for autostart
+- **Reliability**: Dependency checking and ssconf key validation
+
+---
+
+## Features
+
+### Automatic Installation
+- Check and install all required dependencies for Debian/Ubuntu
+- Automatic systemd service setup for RedVPN
+- polkit configuration for management without sudo
+
+### Convenient Management
+- Simple CLI commands (`redvpn start/stop/status`)
+- Custom Command Toggle integration
+- Display current IP address through RedVPN
+
+### Dynamic Configuration
+- Automatic retrieval of RedVPN server parameters via API
+- sing-box configuration update on each startup
+- RedVPN ssconf protocol support
+
+---
+
+## Requirements
+
+### System Requirements
+- **OS**: Debian 10+ or Ubuntu 18.04+
+- **Architecture**: x86_64, ARM64
+- **Permissions**: sudo access for installation
+- **VPN**: Active RedVPN subscription with ssconf key
+
+### Dependencies
+- `curl` - for downloads and API requests
+- `jq` - for parsing JSON responses
+- `sing-box` - VPN client (installed automatically)
+
+---
+
+## Quick Installation
+
+### 1. Clone Repository
 ```bash
 git clone https://github.com/your-username/redvpn-client-manager.git
 cd redvpn-client-manager
 ```
 
-### 2️⃣ Запуск установщика
+### 2. Run Installer
 ```bash
 bash install.sh
 ```
 
-### 3️⃣ Ввод ssconf ключа
+### 3. Enter ssconf Key
 ```
-Введите ваш ssconf ключ RedVPN:
-Формат: ssconf://red.alfanw.net/key/ВАШ_КЛЮЧ#RedVPN
+Enter your RedVPN ssconf key:
+Format: ssconf://red.alfanw.net/key/YOUR_KEY#RedVPN
 ```
 
-> **📝 Примечание**: ssconf ключ выдается провайдером RedVPN при покупке подписки
+> **Note**: ssconf key is provided by RedVPN provider when purchasing a subscription
 
-## 🎮 Использование
+## Usage
 
-### 📱 Основные команды
+### Basic Commands
 
 ```bash
-# Включить VPN
+# Start VPN
 redvpn start
 
-# Выключить VPN  
+# Stop VPN  
 redvpn stop
 
-# Проверить статус
+# Check status
 redvpn status
 
-# Перезапустить VPN
+# Restart VPN
 redvpn restart
 
-# Показать справку
+# Show help
 redvpn help
 ```
 
-## ⚙️ Конфигурация
+## Configuration
 
-### 📁 Структура конфигурации
+### Configuration Structure
 
 ```
 ~/.config/redvpn/
-├── redvpn.conf          # Основная конфигурация
+├── redvpn.conf          # Main configuration
 └── ...
 
 ~/.config/sing-box/
-└── redvpn.json          # Конфигурация sing-box (автогенерируется)
+└── redvpn.json          # sing-box configuration (auto-generated)
 ```
 
-### 🔧 Файл конфигурации
+### Configuration File
 
 `~/.config/redvpn/redvpn.conf`:
 ```bash
 # RedVPN Configuration
-SSCONF='ssconf://red.alfanw.net/key/ВАШ_КЛЮЧ#RedVPN'
+SSCONF='ssconf://red.alfanw.net/key/YOUR_KEY#RedVPN'
 ```
 
-### 🌐 Конфигурация sing-box
+### sing-box Configuration
 
-Файл `~/.config/sing-box/redvpn.json` создается автоматически при каждом запуске:
+The `~/.config/sing-box/redvpn.json` file is automatically created on each startup:
 
 ```json
 {
@@ -183,123 +193,124 @@ SSCONF='ssconf://red.alfanw.net/key/ВАШ_КЛЮЧ#RedVPN'
 ```
 
 ---
-### ❓ Как изменить ssconf ключ?
 
-Отредактируйте файл `~/.config/redvpn/redvpn.conf`:
+### How to Change ssconf Key?
+
+Edit the file `~/.config/redvpn/redvpn.conf`:
 ```bash
 nano ~/.config/redvpn/redvpn.conf
 ```
 
-### ❓ Как удалить RedVPN?
+### How to Uninstall RedVPN?
 
 ```bash
-# Остановить сервис
+# Stop service
 systemctl --user stop redvpn.service
 
-# Удалить файлы
+# Remove files
 sudo rm -f /usr/local/bin/redvpn
 sudo rm -f /usr/local/bin/redvpn-update
 sudo rm -f /etc/systemd/system/redvpn.service
 sudo rm -f /etc/sudoers.d/redvpn-*
 sudo rm -f /etc/polkit-1/rules.d/50-redvpn.rules
 
-# Удалить конфигурацию
+# Remove configuration
 rm -rf ~/.config/redvpn
 rm -rf ~/.config/sing-box
 
-# Перезагрузить systemd
+# Reload systemd
 sudo systemctl daemon-reload
 ```
 
-### ❓ Поддерживаются ли другие VPN протоколы?
+### Are Other VPN Protocols Supported?
 
-Этот клиентский менеджер предназначен исключительно для VPN-провайдера **RedVPN** и поддерживает только ssconf протокол через sing-box. Для других VPN-провайдеров используйте соответствующие клиенты.
+This client manager is designed exclusively for the **RedVPN** VPN provider and supports only the ssconf protocol through sing-box. For other VPN providers, use the appropriate clients.
 
 ---
 
-## 🐛 Устранение неполадок
+## Troubleshooting
 
-### 🔴 Ошибка: "Не удалось получить ответ от сервера"
+### Error: "Failed to get response from server"
 
-**Причины:**
-- Сервер недоступен
-- Неверный ssconf ключ
-- Блокировка домена провайдером
+**Causes:**
+- Server unavailable
+- Invalid ssconf key
+- Domain blocked by ISP
 
-**Решение:**
+**Solution:**
 ```bash
-# Проверьте доступность сервера
+# Check server availability
 curl -I https://red.alfanw.net
 
-# Проверьте формат ключа
+# Check key format
 cat ~/.config/redvpn/redvpn.conf
 ```
 
-### 🔴 Ошибка: "Permission denied"
+### Error: "Permission denied"
 
-**Причины:**
-- Неправильные права доступа
-- Проблемы с polkit
+**Causes:**
+- Incorrect permissions
+- polkit issues
 
-**Решение:**
+**Solution:**
 ```bash
-# Перезагрузите систему
+# Reboot system
 sudo reboot
 
-# Или обновите группы
+# Or update groups
 newgrp systemd-journal
 ```
 
-### 🔴 Ошибка: "sing-box not found"
+### Error: "sing-box not found"
 
-**Причины:**
-- sing-box не установлен
-- Проблемы с PATH
+**Causes:**
+- sing-box not installed
+- PATH issues
 
-**Решение:**
+**Solution:**
 ```bash
-# Переустановите sing-box
+# Reinstall sing-box
 curl -fsSL https://sing-box.app/install.sh | sh
 
-# Проверьте установку
+# Check installation
 which sing-box
 ```
 
-### 🔴 VPN не подключается
+### VPN Not Connecting
 
-**Диагностика:**
+**Diagnostics:**
 ```bash
-# Проверьте статус сервиса
+# Check service status
 systemctl --user status redvpn.service
 
-# Проверьте логи
+# Check logs
 journalctl --user -u redvpn.service -f
 
-# Проверьте конфигурацию
+# Check configuration
 cat ~/.config/sing-box/redvpn.json
 ```
 
-### 🔴 Проблемы с маршрутизацией
+### Routing Issues
 
-**Решение:**
+**Solution:**
 ```bash
-# Проверьте таблицу маршрутизации
+# Check routing table
 ip route show
 
-# Проверьте сетевые интерфейсы
+# Check network interfaces
 ip addr show
 ```
 
 ---
 
-## 📄 Лицензия
+## License
 
-Этот проект распространяется под лицензией MIT. См. файл [LICENSE](LICENSE) для подробностей.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
 <div align="center">
 
-**Сделано с ❤️ для пользователей RedVPN на Debian/Ubuntu**
+**Made for RedVPN users on Debian/Ubuntu**
 
 </div>

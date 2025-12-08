@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# RedVPN CLI - управление VPN сервисом
-# Использование: redvpn [start|stop|status|restart]
+# RedVPN CLI - VPN service management
+# Usage: redvpn [start|stop|status|restart]
 
 SERVICE_NAME="redvpn.service"
 
 show_usage() {
-    echo "RedVPN CLI - управление VPN сервисом"
+    echo "RedVPN CLI - VPN service management"
     echo ""
-    echo "Использование:"
-    echo "  redvpn start   - Включить VPN"
-    echo "  redvpn stop    - Выключить VPN"
-    echo "  redvpn status  - Показать статус VPN"
-    echo "  redvpn restart - Перезапустить VPN"
+    echo "Usage:"
+    echo "  redvpn start   - Start VPN"
+    echo "  redvpn stop    - Stop VPN"
+    echo "  redvpn status  - Show VPN status"
+    echo "  redvpn restart - Restart VPN"
     echo ""
-    echo "Примеры:"
+    echo "Examples:"
     echo "  redvpn start"
     echo "  redvpn stop"
     echo "  redvpn status"
@@ -23,46 +23,46 @@ show_usage() {
 
 case "${1:-}" in
     start)
-        echo "Включение RedVPN..."
+        echo "Starting RedVPN..."
         systemctl start "$SERVICE_NAME"
         sleep 2
         if systemctl is-active --quiet "$SERVICE_NAME"; then
-            echo "✅ RedVPN включен"
-            echo "IP через VPN: $(curl -s ifconfig.me 2>/dev/null || echo 'недоступен')"
+            echo "✓ RedVPN started"
+            echo "IP through VPN: $(curl -s ifconfig.me 2>/dev/null || echo 'unavailable')"
         else
-            echo "❌ Ошибка включения RedVPN"
+            echo "✗ Error starting RedVPN"
             exit 1
         fi
         ;;
     stop)
-        echo "Выключение RedVPN..."
+        echo "Stopping RedVPN..."
         systemctl stop "$SERVICE_NAME"
         sleep 1
         if ! systemctl is-active --quiet "$SERVICE_NAME"; then
-            echo "✅ RedVPN выключен"
-            echo "IP без VPN: $(curl -s ifconfig.me 2>/dev/null || echo 'недоступен')"
+            echo "✓ RedVPN stopped"
+            echo "IP without VPN: $(curl -s ifconfig.me 2>/dev/null || echo 'unavailable')"
         else
-            echo "❌ Ошибка выключения RedVPN"
+            echo "✗ Error stopping RedVPN"
             exit 1
         fi
         ;;
     status)
         if systemctl is-active --quiet "$SERVICE_NAME"; then
-            echo "🟢 RedVPN активен"
-            echo "IP: $(curl -s ifconfig.me 2>/dev/null || echo 'недоступен')"
+            echo "✓ RedVPN is active"
+            echo "IP: $(curl -s ifconfig.me 2>/dev/null || echo 'unavailable')"
         else
-            echo "🔴 RedVPN неактивен"
+            echo "✗ RedVPN is inactive"
         fi
         ;;
     restart)
-        echo "Перезапуск RedVPN..."
+        echo "Restarting RedVPN..."
         systemctl restart "$SERVICE_NAME"
         sleep 3
         if systemctl is-active --quiet "$SERVICE_NAME"; then
-            echo "✅ RedVPN перезапущен"
-            echo "IP: $(curl -s ifconfig.me 2>/dev/null || echo 'недоступен')"
+            echo "✓ RedVPN restarted"
+            echo "IP: $(curl -s ifconfig.me 2>/dev/null || echo 'unavailable')"
         else
-            echo "❌ Ошибка перезапуска RedVPN"
+            echo "✗ Error restarting RedVPN"
             exit 1
         fi
         ;;
@@ -70,13 +70,13 @@ case "${1:-}" in
         show_usage
         ;;
     "")
-        echo "Ошибка: Не указана команда"
+        echo "Error: No command specified"
         echo ""
         show_usage
         exit 1
         ;;
     *)
-        echo "Ошибка: Неизвестная команда '$1'"
+        echo "Error: Unknown command '$1'"
         echo ""
         show_usage
         exit 1
