@@ -1,4 +1,5 @@
-# RedVPN Client Manager
+
+[English](README.md) | [Русский](docs/README-RU.md)
 
 <div align="center">
 
@@ -7,12 +8,10 @@
 ![sing-box](https://img.shields.io/badge/sing--box-VPN-00B8D4?style=for-the-badge&logo=shield&logoColor=white)
 ![systemd](https://img.shields.io/badge/systemd-service-DA2525?style=for-the-badge&logo=linux&logoColor=white)
 ![Debian](https://img.shields.io/badge/Debian%20%7C%20Ubuntu-ready-A81D33?style=for-the-badge&logo=debian&logoColor=white)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Debian%20%7C%20Ubuntu-orange.svg?style=flat-square)](https://www.debian.org/)
-
-[English](README.md) | [Русский](docs/README-RU.md)
 
 </div>
+
+# RedVPN Client Manager
 
 > Client manager for RedVPN provider with ssconf protocol support. Provides easy VPN connection and management through sing-box on Debian/Ubuntu systems.
 
