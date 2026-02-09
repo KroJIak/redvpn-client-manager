@@ -90,7 +90,7 @@ cd redvpn-client-manager
 
 ### 2. Run Installer
 ```bash
-bash install.sh
+bash install.sh [--debug] [--quiet] [--skip-key-input]
 ```
 
 ### 3. Enter ssconf Key
@@ -100,6 +100,12 @@ Format: ssconf://red.alfanw.net/key/YOUR_KEY#RedVPN
 ```
 
 > **Note**: ssconf key is provided by RedVPN provider when purchasing a subscription
+
+### Installer Flags
+
+- `--debug` - hide detailed command output
+- `--quiet` - no normal logs (errors still shown)
+- `--skip-key-input` - use existing key from `~/.config/redvpn/redvpn.conf`
 
 ## Usage
 

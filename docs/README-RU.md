@@ -89,7 +89,7 @@ cd redvpn-client-manager
 
 ### 2. Запуск установщика
 ```bash
-bash install.sh
+bash install.sh [--debug] [--quiet] [--skip-key-input]
 ```
 
 ### 3. Ввод ssconf ключа
@@ -99,6 +99,12 @@ bash install.sh
 ```
 
 > **Примечание**: ssconf ключ выдается провайдером RedVPN при покупке подписки
+
+### Флаги установщика
+
+- `--debug` - скрыть подробный вывод команд
+- `--quiet` - без обычных логов (ошибки показываются)
+- `--skip-key-input` - использовать ключ из `~/.config/redvpn/redvpn.conf`
 
 ## Использование
 
