@@ -57,13 +57,23 @@ SCRIPT_DIR="$(dirname "$0")"
 
 # Copy redvpn-update to /usr/local/bin/
 echo "Copying redvpn-update to /usr/local/bin/..."
-sudo cp "$SCRIPT_DIR/redvpn-update" "/usr/local/bin/redvpn-update"
-sudo chmod +x "/usr/local/bin/redvpn-update"
+if [ -f "$SCRIPT_DIR/redvpn-update" ]; then
+	sudo cp "$SCRIPT_DIR/redvpn-update" "/usr/local/bin/redvpn-update"
+	sudo chmod +x "/usr/local/bin/redvpn-update"
+else
+	echo "Error: redvpn-update not found in $SCRIPT_DIR"
+	exit 1
+fi
 
 # Copy redvpn CLI to /usr/local/bin/
 echo "Copying redvpn CLI to /usr/local/bin/..."
-sudo cp "$SCRIPT_DIR/redvpn" "/usr/local/bin/redvpn"
-sudo chmod +x "/usr/local/bin/redvpn"
+if [ -f "$SCRIPT_DIR/redvpn" ]; then
+	sudo cp "$SCRIPT_DIR/redvpn" "/usr/local/bin/redvpn"
+	sudo chmod +x "/usr/local/bin/redvpn"
+else
+	echo "Error: redvpn not found in $SCRIPT_DIR"
+	exit 1
+fi
 
 # Copy redvpn.service to /etc/systemd/system/ with placeholder replacement
 echo "Copying systemd service..."
