@@ -84,7 +84,7 @@
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/your-username/redvpn-client-manager.git
+git clone https://github.com/KroJIak/redvpn-client-manager.git
 cd redvpn-client-manager
 ```
 
